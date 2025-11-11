@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ижевск - Главная</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="nav">
+        <div>
+            <a href="/">Главная</a>
+            <a href="/attractions">Достопримечательности</a>
+        </div>
+        <div>
+            {% if user %}
+                <span>Привет, {{ user.username }}</span>
+                <a href="/logout">Выйти</a>
+            {% else %}
+                <a href="/login">Вход</a>
+                <a href="/register">Регистрация</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Баннер с приветствием -->
+        <div class="hero-banner">
+            <h1>Добро пожаловать в Ижевск!</h1>
+            <p>Столица Удмуртии - город с богатой историей, уникальной культурой и гостеприимными жителями</p>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <span class="hero-number">250+</span>
+                    <span class="hero-text">лет истории</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="hero-number">600+</span>
+                    <span class="hero-text">тысяч жителей</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="hero-number">{{ attractions|length }}+</span>
+                    <span class="hero-text">достопримечательностей</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Подробная информация о городе -->
+        <div class="city-detail">
+            <h2>Ижевск - город на берегу пруда</h2>
+            <div class="city-description">
+                <div class="description-text">
+                    <p>Основанный в 1760 году как железоделательный завод, Ижевск вырос в крупный промышленный и культурный центр России. Город расположен на реке Иж, в 40 километрах от её впадения в Каму.</p>
+
+                    <p>Ижевск часто называют "Оружейной столицей России" - здесь производят знаменитые автоматы Калашникова, охотничьи ружья и другую продукцию оборонного значения. Но город славится не только оружием - это ещё и важный культурный центр Удмуртии.</p>
+
+                    <div class="highlight-facts">
+                        <h3>Интересные факты:</h3>
+                        <ul>
+                            <li>🕰️ Ижевск старше Москвы на 7 лет</li>
+                            <li>🎯 Мировое лидерство в производстве стрелкового оружия</li>
+                            <li>🌳 Более 40% территории города занято парками и скверами</li>
+                            <li>🎵 Родина композитора П.И. Чайковского находится в nearby Воткинске</li>
+                            <li>🏭 Крупнейший в России производитель мотоциклов "Иж"</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="description-image">
+                    <img src="{{ url_for('static', filename='images/city-view.jpg') }}" alt="Панорама Ижевска" onerror="this.src='{{ url_for('static', filename='images/placeholder.jpg') }}'">
+                </div>
+            </div>
+        </div>
+
+        <!-- Ключевые особенности -->
+        <div class="features">
+            <h2>Что делает Ижевск особенным?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🏭</div>
+                    <h3>Промышленный гигант</h3>
+                    <p>Крупнейший в России центр оружейной промышленности с более чем 250-летней историей металлообработки</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌊</div>
+                    <h3>Город у воды</h3>
+                    <p>Ижевский пруд - один из крупнейших искусственных водоёмов в Европе, созданный в 1760 году</p></div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Культурный центр</h3>
+                    <p>Богатые традиции удмуртской культуры сочетаются с современными театрами, музеями и галереями</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌿</div>
+                    <h3>Экологичный город</h3>
+                    <p>Многочисленные парки, скверы и зелёные зоны делают город комфортным для жизни</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Популярные достопримечательности -->
+        <div class="popular-attractions">
+            <h2>Популярные достопримечательности</h2>
+            <p class="section-subtitle">Самые посещаемые места Ижевска, которые стоит увидеть каждому гостю города</p>
+
+            <div class="attractions">
+                {% for attr in attractions %}
+                <div class="card">
+                    <img src="{{ url_for('static', filename='images/' + attr[5]) }}" alt="{{ attr[1] }}" onerror="this.src='{{ url_for('static', filename='images/placeholder.jpg') }}'">
+                    <div class="card-badge">{{ attr[3] }}</div>
+                    <h3>{{ attr[1] }}</h3>
+                    <p>{{ attr[2] }}</p>
+                    <p><small>📍 {{ attr[4] }}</small></p>
+                    <a href="{{ url_for('attraction', id=attr[0]) }}" class="btn">Подробнее</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Популярные категории -->
+        <div class="categories">
+            <h2>Исследуйте по категориям</h2>
+            <p class="section-subtitle">Найдите интересующие вас места по тематическим направлениям</p>
+
+            <div class="category-list">
+                <a href="/attractions?category=Архитектура" class="category-btn">
+                    <span class="category-icon">🏛️</span>
+                    Архитектура
+                </a>
+                <a href="/attractions?category=Музеи" class="category-btn">
+                    <span class="category-icon">🏛️</span>
+                    Музеи
+                </a>
+                <a href="/attractions?category=Парки" class="category-btn">
+                    <span class="category-icon">🌳</span>
+                    Парки
+                </a>
+                <a href="/attractions?category=Памятники" class="category-btn">
+                    <span class="category-icon">🗿</span>
+                    Памятники
+                </a>
+                <a href="/attractions?category=Развлечения" class="category-btn">
+                    <span class="category-icon">🎪</span>
+                    Развлечения
+                </a>
+                <a href="/attractions?category=Культура" class="category-btn">
+                    <span class="category-icon">🎭</span>
+                    Культура
+                </a>
+            </div>
+        </div>
+
+        <!-- Призыв к действию -->
+        <div class="cta-section">
+            <div class="cta-content">
+                <h2>Готовы исследовать Ижевск?</h2>
+                <p>Откройте для себя все достопримечательности столицы Удмуртии</p>
+                <div class="cta-buttons">
+                    <a href="/attractions" class="btn btn-primary">Все достопримечательности</a>
+                    <a href="#top" class="btn btn-secondary">Наверх ↑</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Футер -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h3>Достопримечательности Ижевска</h3>
+                    <p>Путеводитель по самым интересным местам столицы Удмуртии</p></div>
+                <div class="footer-links">
+                    <a href="/">Главная</a>
+                    <a href="/attractions">Достопримечательности</a>
+                    <a href="/login">Вход</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Достопримечательности Ижевска. Все права защищены.</p>
+                <p>Откройте для себя красоту столицы Удмуртии!</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

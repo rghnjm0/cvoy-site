@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Все достопримечательности</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="nav">
+        <div>
+            <a href="/">Главная</a>
+            <a href="/attractions">Достопримечательности</a>
+        </div>
+        <div>
+            {% if user %}
+                <span>Привет, {{ user.username }}</span>
+                <a href="/logout">Выйти</a>
+            {% else %}
+                <a href="/login">Вход</a>
+                <a href="/register">Регистрация</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="container">
+        {% if current_category %}
+            <h1>Достопримечательности: {{ current_category }}</h1>
+        {% else %}
+            <h1>Все достопримечательности Ижевска</h1>
+        {% endif %}
+
+        <!-- Навигация по категориям -->
+        <div class="categories-nav" style="margin-bottom: 30px; text-align: center;">
+            <a href="/attractions" class="btn {% if not current_category %}btn-primary{% else %}btn-secondary{% endif %}" style="margin: 5px;">Все</a>
+            <a href="/attractions?category=Архитектура" class="btn {% if current_category == 'Архитектура' %}btn-primary{% else %}btn-secondary{% endif %}" style="margin: 5px;">Архитектура</a>
+            <a href="/attractions?category=Музеи" class="btn {% if current_category == 'Музеи' %}btn-primary{% else %}btn-secondary{% endif %}" style="margin: 5px;">Музеи</a>
+            <a href="/attractions?category=Парки" class="btn {% if current_category == 'Парки' %}btn-primary{% else %}btn-secondary{% endif %}" style="margin: 5px;">Парки</a>
+            <a href="/attractions?category=Памятники" class="btn {% if current_category == 'Памятники' %}btn-primary{% else %}btn-secondary{% endif %}" style="margin: 5px;">Памятники</a>
+            <a href="/attractions?category=Развлечения" class="btn {% if current_category == 'Развлечения' %}btn-primary{% else %}btn-secondary{% endif %}" style="margin: 5px;">Развлечения</a>
+            <a href="/attractions?category=Культура" class="btn {% if current_category == 'Культура' %}btn-primary{% else %}btn-secondary{% endif %}" style="margin: 5px;">Культура</a>
+            <a href="/attractions?category=Прогулки" class="btn {% if current_category == 'Прогулки' %}btn-primary{% else %}btn-secondary{% endif %}" style="margin: 5px;">Прогулки</a>
+        </div>
+
+        <div class="attractions">
+            {% for attr in attractions %}
+            <div class="card">
+                <img src="{{ url_for('static', filename='images/' + attr[5]) }}" alt="{{ attr[1] }}" onerror="this.src='{{ url_for('static', filename='images/placeholder.jpg') }}'">
+                <div class="card-badge">{{ attr[3] }}</div>
+                <h3>{{ attr[1] }}</h3>
+                <p>{{ attr[2] }}</p>
+                <p><small>📍 {{ attr[4] }}</small></p>
+                <a href="{{ url_for('attraction', id=attr[0]) }}" class="btn">Подробнее</a>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if not attractions %}
+        <div style="text-align: center; padding: 40px;">
+            <h3>Достопримечательности не найдены</h3>
+            <p>Попробуйте выбрать другую категорию</p>
+            <a href="/attractions" class="btn">Показать все достопримечательности</a>
+        </div>
+        {% endif %}
+
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="/" class="btn">На главную</a>
+        </div>
+    </div>
+</body>
+</html>

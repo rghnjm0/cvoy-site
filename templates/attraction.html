@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ attraction[1] }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="nav">
+        <div>
+            <a href="/">Главная</a>
+            <a href="/attractions">Достопримечательности</a>
+        </div>
+        <div>
+            {% if user %}
+                <span>Привет, {{ user.username }}</span>
+                <a href="/logout">Выйти</a>
+            {% else %}
+                <a href="/login">Вход</a>
+                <a href="/register">Регистрация</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="container">
+        <a href="{{ url_for('attractions') }}" class="btn">← Назад к списку</a>
+
+        <div class="attraction-detail">
+            <img src="{{ url_for('static', filename='images/' + attraction[5]) }}" alt="{{ attraction[1] }}" onerror="this.src='{{ url_for('static', filename='images/placeholder.jpg') }}'">
+            <h1>{{ attraction[1] }}</h1>
+            <p><strong>Категория:</strong> {{ attraction[3] }}</p>
+            <p>{{ attraction[2] }}</p>
+            <p><strong>Адрес:</strong> {{ attraction[4] }}</p>
+
+            <div style="margin-top: 30px;">
+                <a href="/attractions?category={{ attraction[3] }}" class="btn btn-primary">
+                    Посмотреть другие места в категории "{{ attraction[3] }}"
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
