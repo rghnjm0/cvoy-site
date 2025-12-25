@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Админ-панель - Удмуртия</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="nav">
+        <div>
+            <div class="nav-links">
+                <a href="/"><i class="fas fa-home"></i> Главная</a>
+                <a href="/attractions"><i class="fas fa-landmark"></i> Все места</a>
+                <a href="/admin"><i class="fas fa-cog"></i> Админ-панель</a>
+            </div>
+            <div class="nav-user">
+                <span class="user-greeting"><i class="fas fa-user-shield"></i> {{ user.username }} (Админ)</span>
+                <a href="/logout"><i class="fas fa-sign-out-alt"></i> Выйти</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1><i class="fas fa-cog"></i> Админ-панель</h1>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="flash">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Статистика -->
+        <div class="community-stats">
+            <h2><i class="fas fa-chart-bar"></i> Статистика</h2>
+            <div class="stats-grid">
+                <div class="stat">
+                    <div class="stat-number">{{ pending_count }}</div>
+                    <div class="stat-text">на модерации</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">{{ approved_count }}</div>
+                    <div class="stat-text">опубликовано</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">{{ users_count }}</div>
+                    <div class="stat-text">пользователей</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Места на модерации -->
+        <div style="margin-top: 50px;">
+            <h2><i class="fas fa-clock"></i> Места на модерации</h2>
+
+            {% if pending %}
+                <div class="attractions">
+                    {% for place in pending %}
+                    <div class="card">
+                        <img src="{{ url_for('static', filename=place[6]) }}" alt="{{ place[1] }}"
+                             onerror="this.src='{{ url_for('static', filename='images/placeholder.jpg') }}'">
+                        <div class="card-badge" style="background: #f39c12;">На проверке</div>
+                        <h3>{{ place[1] }}</h3>
+                        <p>{{ place[2] }}</p>
+                        <p><small><i class="fas fa-user"></i> {{ place[12] }}</small></p>
+                        <p><small><i class="fas fa-calendar"></i> {{ place[8][:10] }}</small></p>
+
+                        <div style="display: flex; gap: 10px; margin: 15px;">
+                            <a href="{{ url_for('approve_attraction', id=place[0]) }}" class="btn btn-success"
+                               onclick="return confirm('Одобрить это место?')">
+                                <i class="fas fa-check"></i> Одобрить
+                            </a>
+                            <a href="{{ url_for('reject_attraction', id=place[0]) }}" class="btn btn-danger"
+                               onclick="return confirm('Отклонить это место?')">
+                                <i class="fas fa-times"></i> Отклонить
+                            </a>
+                            <a href="{{ url_for('attraction', id=place[0]) }}" class="btn">
+                                <i class="fas fa-eye"></i> Просмотреть
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <h3><i class="fas fa-check-circle"></i> Нет мест на модерации</h3>
+                    <p>Все места проверены и опубликованы</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="/" class="btn btn-primary">
+                <i class="fas fa-home"></i> На главную
+            </a>
+        </div>
+    </div>
+</body>
+</html>

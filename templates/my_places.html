@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Мои места - Удмуртия</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="nav">
+        <div>
+            <div class="nav-links">
+                <a href="/"><i class="fas fa-home"></i> Главная</a>
+                <a href="/attractions"><i class="fas fa-landmark"></i> Все места</a>
+                <a href="/add_place"><i class="fas fa-plus-circle"></i> Добавить место</a>
+                <a href="/my_places"><i class="fas fa-map-marker-alt"></i> Мои места</a>
+            </div>
+            <div class="nav-user">
+                <span class="user-greeting"><i class="fas fa-user"></i> {{ user.username }}</span>
+                <a href="/logout"><i class="fas fa-sign-out-alt"></i> Выйти</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1><i class="fas fa-map-marker-alt"></i> Мои добавленные места</h1>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="flash">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div style="margin-bottom: 30px;">
+            <a href="/add_place" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Добавить новое место
+            </a>
+        </div>
+
+        {% if places %}
+            <div class="places-grid">
+                {% for place in places %}
+                <div class="place-card">
+                    <img src="{{ url_for('static', filename=place[6]) }}" alt="{{ place[1] }}"
+                         onerror="this.src='{{ url_for('static', filename='images/placeholder.jpg') }}'">
+
+                    <div class="place-status {{ place[8] }}">
+                        {% if place[8] == 'pending' %}
+                            <i class="fas fa-clock"></i> На модерации
+                        {% elif place[8] == 'approved' %}
+                            <i class="fas fa-check"></i> Опубликовано
+                        {% else %}
+                            <i class="fas fa-times"></i> Отклонено
+                        {% endif %}
+                    </div>
+
+                    <h3>{{ place[1] }}</h3>
+                    <p>{{ place[2] }}</p>
+                    <p><small><i class="fas fa-tag"></i> {{ place[4] }}</small></p>
+                    <p><small><i class="fas fa-eye"></i> {{ place[10] }} просмотров</small></p>
+                    <p><small><i class="fas fa-star"></i> Рейтинг: {{ "%.1f"|format(place[11]) if place[11] else "Нет оценок" }}</small></p>
+
+                    <div class="place-actions">
+                        <a href="{{ url_for('attraction', id=place[0]) }}" class="btn btn-small">
+                            <i class="fas fa-eye"></i> Просмотреть
+                        </a>
+                        <a href="{{ url_for('edit_place', id=place[0]) }}" class="btn btn-small btn-secondary">
+                            <i class="fas fa-edit"></i> Редактировать
+                        </a>
+                        <a href="{{ url_for('delete_place', id=place[0]) }}" class="btn btn-small btn-danger"
+                           onclick="return confirm('Вы уверены, что хотите удалить это место?')">
+                            <i class="fas fa-trash"></i> Удалить
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <h3><i class="fas fa-map-marked-alt"></i> Вы еще не добавили ни одного места</h3>
+                <p>Поделитесь своими любимыми уголками Удмуртии с другими участниками сообщества!</p>
+                <a href="/add_place" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Добавить первое место
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

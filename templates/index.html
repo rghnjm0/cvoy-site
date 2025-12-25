@@ -1,124 +1,76 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Ижевск - Главная</title>
+    <title>Удмуртия - Главная</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div class="nav">
         <div>
-            <a href="/">Главная</a>
-            <a href="/attractions">Достопримечательности</a>
-        </div>
-        <div>
-            {% if user %}
-                <span>Привет, {{ user.username }}</span>
-                <a href="/logout">Выйти</a>
-            {% else %}
-                <a href="/login">Вход</a>
-                <a href="/register">Регистрация</a>
-            {% endif %}
+            <div class="nav-links">
+                <a href="/"><i class="fas fa-home"></i> Главная</a>
+                <a href="/attractions"><i class="fas fa-landmark"></i> Все места</a>
+                <a href="/add_place"><i class="fas fa-plus-circle"></i> Добавить место</a>
+                {% if user %}
+                    <a href="/my_places"><i class="fas fa-map-marker-alt"></i> Мои места</a>
+                {% endif %}
+                {% if user and user.is_admin %}
+                    <a href="/admin"><i class="fas fa-cog"></i> Админ-панель</a>
+                {% endif %}
+            </div>
+            <div class="nav-user">
+                {% if user %}
+                    <span class="user-greeting"><i class="fas fa-user"></i> {{ user.username }}</span>
+                    <a href="/logout"><i class="fas fa-sign-out-alt"></i> Выйти</a>
+                {% else %}
+                    <a href="/login"><i class="fas fa-sign-in-alt"></i> Вход</a>
+                    <a href="/register"><i class="fas fa-user-plus"></i> Регистрация</a>
+                {% endif %}
+            </div>
         </div>
     </div>
 
     <div class="container">
-        <!-- Баннер с приветствием -->
+        <!-- Баннер -->
         <div class="hero-banner">
-            <h1>Добро пожаловать в Ижевск!</h1>
-            <p>Столица Удмуртии - город с богатой историей, уникальной культурой и гостеприимными жителями</p>
+            <h1>Откройте Удмуртию вместе с нами!</h1>
+            <p>Сообщество любителей уникальных мест Удмуртской Республики. Добавляйте, исследуйте и делитесь своими открытиями!</p>
+
             <div class="hero-stats">
                 <div class="hero-stat">
-                    <span class="hero-number">250+</span>
-                    <span class="hero-text">лет истории</span>
+                    <span class="hero-number">{{ total_places }}+</span>
+                    <span class="hero-text">мест добавлено</span>
                 </div>
                 <div class="hero-stat">
-                    <span class="hero-number">600+</span>
-                    <span class="hero-text">тысяч жителей</span>
+                    <span class="hero-number">{{ total_users }}+</span>
+                    <span class="hero-text">участников</span>
                 </div>
                 <div class="hero-stat">
-                    <span class="hero-number">{{ attractions|length }}+</span>
-                    <span class="hero-text">достопримечательностей</span>
+                    <span class="hero-number">{{ nature_places }}+</span>
+                    <span class="hero-text">природных мест</span>
                 </div>
             </div>
         </div>
 
-        <!-- Подробная информация о городе -->
-        <div class="city-detail">
-            <h2>Ижевск - город на берегу пруда</h2>
-            <div class="city-description">
-                <div class="description-text">
-                    <p>Основанный в 1760 году как железоделательный завод, Ижевск вырос в крупный промышленный и культурный центр России. Город расположен на реке Иж, в 40 километрах от её впадения в Каму.</p>
-
-                    <p>Ижевск часто называют "Оружейной столицей России" - здесь производят знаменитые автоматы Калашникова, охотничьи ружья и другую продукцию оборонного значения. Но город славится не только оружием - это ещё и важный культурный центр Удмуртии.</p>
-
-                    <div class="highlight-facts">
-                        <h3>Интересные факты:</h3>
-                        <ul>
-                            <li>🕰️ Ижевск старше Москвы на 7 лет</li>
-                            <li>🎯 Мировое лидерство в производстве стрелкового оружия</li>
-                            <li>🌳 Более 40% территории города занято парками и скверами</li>
-                            <li>🎵 Родина композитора П.И. Чайковского находится в nearby Воткинске</li>
-                            <li>🏭 Крупнейший в России производитель мотоциклов "Иж"</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="description-image">
-                    <img src="{{ url_for('static', filename='images/city-view.jpg') }}" alt="Панорама Ижевска" onerror="this.src='{{ url_for('static', filename='images/placeholder.jpg') }}'">
-                </div>
-            </div>
+        <!-- Поиск -->
+        <div class="search-box">
+            <form action="/search" method="GET" class="search-form">
+                <input type="text" name="q" placeholder="Поиск мест по названию, описанию или адресу...">
+                <button type="submit" class="btn"><i class="fas fa-search"></i> Найти</button>
+            </form>
         </div>
 
-        <!-- Ключевые особенности -->
-        <div class="features">
-            <h2>Что делает Ижевск особенным?</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">🏭</div>
-                    <h3>Промышленный гигант</h3>
-                    <p>Крупнейший в России центр оружейной промышленности с более чем 250-летней историей металлообработки</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🌊</div>
-                    <h3>Город у воды</h3>
-                    <p>Ижевский пруд - один из крупнейших искусственных водоёмов в Европе, созданный в 1760 году</p></div>
-                <div class="feature-card">
-                    <div class="feature-icon">🎨</div>
-                    <h3>Культурный центр</h3>
-                    <p>Богатые традиции удмуртской культуры сочетаются с современными театрами, музеями и галереями</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🌿</div>
-                    <h3>Экологичный город</h3>
-                    <p>Многочисленные парки, скверы и зелёные зоны делают город комфортным для жизни</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Популярные достопримечательности -->
-        <div class="popular-attractions">
-            <h2>Популярные достопримечательности</h2>
-            <p class="section-subtitle">Самые посещаемые места Ижевска, которые стоит увидеть каждому гостю города</p>
-
-            <div class="attractions">
-                {% for attr in attractions %}
-                <div class="card">
-                    <img src="{{ url_for('static', filename='images/' + attr[5]) }}" alt="{{ attr[1] }}" onerror="this.src='{{ url_for('static', filename='images/placeholder.jpg') }}'">
-                    <div class="card-badge">{{ attr[3] }}</div>
-                    <h3>{{ attr[1] }}</h3>
-                    <p>{{ attr[2] }}</p>
-                    <p><small>📍 {{ attr[4] }}</small></p>
-                    <a href="{{ url_for('attraction', id=attr[0]) }}" class="btn">Подробнее</a>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-
-        <!-- Популярные категории -->
+        <!-- Категории -->
         <div class="categories">
             <h2>Исследуйте по категориям</h2>
-            <p class="section-subtitle">Найдите интересующие вас места по тематическим направлениям</p>
+            <p class="section-subtitle">Выберите интересующую вас категорию мест</p>
 
             <div class="category-list">
+                <a href="/attractions?category=Природа" class="category-btn">
+                    <span class="category-icon">🌳</span>
+                    Природа
+                </a>
                 <a href="/attractions?category=Архитектура" class="category-btn">
                     <span class="category-icon">🏛️</span>
                     Архитектура
@@ -135,10 +87,6 @@
                     <span class="category-icon">🗿</span>
                     Памятники
                 </a>
-                <a href="/attractions?category=Развлечения" class="category-btn">
-                    <span class="category-icon">🎪</span>
-                    Развлечения
-                </a>
                 <a href="/attractions?category=Культура" class="category-btn">
                     <span class="category-icon">🎭</span>
                     Культура
@@ -146,14 +94,78 @@
             </div>
         </div>
 
+        <!-- Последние добавленные -->
+        <div class="popular-attractions">
+            <h2>Недавно добавленные места</h2>
+            <p class="section-subtitle">Самые новые места, добавленные участниками сообщества</p>
+
+            <div class="attractions">
+                {% for attr in attractions %}
+                <div class="card">
+                    <img src="{{ url_for('static', filename=attr[6]) }}" alt="{{ attr[1] }}"
+                         onerror="this.src='{{ url_for('static', filename='images/placeholder.jpg') }}'">
+                    <div class="card-badge">{{ attr[4] }}</div>
+                    <h3>{{ attr[1] }}</h3>
+                    <p>{{ attr[2] }}</p>
+                    <p><small><i class="fas fa-user"></i> {{ attr[12] if attr[12] else 'Админ' }}</small></p>
+                    <p><small><i class="fas fa-map-marker-alt"></i> {{ attr[5] }}</small></p>
+                    <a href="{{ url_for('attraction', id=attr[0]) }}" class="btn">Подробнее</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Популярные места -->
+        <div class="popular-attractions">
+            <h2>Самые популярные места</h2>
+            <p class="section-subtitle">Места с наибольшим количеством просмотров</p>
+
+            <div class="attractions">
+                {% for attr in popular %}
+                <div class="card">
+                    <img src="{{ url_for('static', filename=attr[6]) }}" alt="{{ attr[1] }}"
+                         onerror="this.src='{{ url_for('static', filename='images/placeholder.jpg') }}'">
+                    <div class="card-badge">🔥 Популярное</div>
+                    <h3>{{ attr[1] }}</h3>
+                    <p>{{ attr[2] }}</p>
+                    <p><small><i class="fas fa-eye"></i> {{ attr[10] }} просмотров</small></p>
+                    <a href="{{ url_for('attraction', id=attr[0]) }}" class="btn">Подробнее</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Статистика сообщества -->
+        <div class="community-stats">
+            <h2>Наше сообщество растёт!</h2>
+            <div class="stats-grid">
+                <div class="stat">
+                    <div class="stat-number">{{ total_places }}</div>
+                    <div class="stat-text">уникальных мест</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">{{ total_users }}</div>
+                    <div class="stat-text">активных участников</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-text">доступ к базе</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-text">бесплатно</div>
+                </div>
+            </div>
+        </div>
+
         <!-- Призыв к действию -->
         <div class="cta-section">
             <div class="cta-content">
-                <h2>Готовы исследовать Ижевск?</h2>
-                <p>Откройте для себя все достопримечательности столицы Удмуртии</p>
+                <h2>Поделитесь своими открытиями!</h2>
+                <p>Знаете интересное место в Удмуртии? Добавьте его в нашу базу и поделитесь с сообществом</p>
                 <div class="cta-buttons">
-                    <a href="/attractions" class="btn btn-primary">Все достопримечательности</a>
-                    <a href="#top" class="btn btn-secondary">Наверх ↑</a>
+                    <a href="/add_place" class="btn btn-primary"><i class="fas fa-plus"></i> Добавить место</a>
+                    <a href="/attractions" class="btn btn-secondary"><i class="fas fa-compass"></i> Исследовать все места</a>
                 </div>
             </div>
         </div>
@@ -164,17 +176,21 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-info">
-                    <h3>Достопримечательности Ижевска</h3>
-                    <p>Путеводитель по самым интересным местам столицы Удмуртии</p></div>
+                    <h3>Удмуртия: уникальные места</h3>
+                    <p>Краудсорсинговая платформа для сбора и обмена информацией о самых интересных местах Удмуртской Республики. Присоединяйтесь к нашему сообществу!</p>
+                </div>
                 <div class="footer-links">
+                    <h3>Быстрые ссылки</h3>
                     <a href="/">Главная</a>
-                    <a href="/attractions">Достопримечательности</a>
+                    <a href="/attractions">Все места</a>
+                    <a href="/add_place">Добавить место</a>
                     <a href="/login">Вход</a>
+                    <a href="/register">Регистрация</a>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 Достопримечательности Ижевска. Все права защищены.</p>
-                <p>Откройте для себя красоту столицы Удмуртии!</p>
+                <p>&copy; 2024 Удмуртия: уникальные места. Все права защищены.</p>
+                <p>Создано с ❤️ для любителей Удмуртии</p>
             </div>
         </div>
     </footer>

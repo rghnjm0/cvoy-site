@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Добавить место - Удмуртия</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="nav">
+        <div>
+            <div class="nav-links">
+                <a href="/"><i class="fas fa-home"></i> Главная</a>
+                <a href="/attractions"><i class="fas fa-landmark"></i> Все места</a>
+                <a href="/add_place"><i class="fas fa-plus-circle"></i> Добавить место</a>
+                {% if user %}
+                    <a href="/my_places"><i class="fas fa-map-marker-alt"></i> Мои места</a>
+                {% endif %}
+            </div>
+            <div class="nav-user">
+                {% if user %}
+                    <span class="user-greeting"><i class="fas fa-user"></i> {{ user.username }}</span>
+                    <a href="/logout"><i class="fas fa-sign-out-alt"></i> Выйти</a>
+                {% else %}
+                    <a href="/login"><i class="fas fa-sign-in-alt"></i> Вход</a>
+                    <a href="/register"><i class="fas fa-user-plus"></i> Регистрация</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1><i class="fas fa-plus-circle"></i> Добавить новое место в Удмуртии</h1>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="flash">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="add-place-form">
+            <form method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="name"><i class="fas fa-signature"></i> Название места *</label>
+                    <input type="text" id="name" name="name" required placeholder="Например: Гора Байгурезь">
+                </div>
+
+                <div class="form-group">
+                    <label for="description"><i class="fas fa-align-left"></i> Краткое описание *</label>
+                    <textarea id="description" name="description" required rows="3" placeholder="Кратко опишите место (максимум 200 символов)"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="detailed_description"><i class="fas fa-file-alt"></i> Подробное описание *</label>
+                    <textarea id="detailed_description" name="detailed_description" required rows="8" placeholder="Расскажите подробно об этом месте: история, особенности, чем интересно, как добраться"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="category"><i class="fas fa-tag"></i> Категория *</label>
+                    <select id="category" name="category" required>
+                        <option value="">Выберите категорию</option>
+                        <option value="Природа">🌳 Природа (горы, реки, озёра, леса)</option>
+                        <option value="Архитектура">🏛️ Архитектура (здания, храмы, мосты)</option>
+                        <option value="Музеи">🏛️ Музеи</option>
+                        <option value="Парки">🌳 Парки и скверы</option>
+                        <option value="Памятники">🗿 Памятники и скульптуры</option>
+                        <option value="Культура">🎭 Культурные объекты</option>
+                        <option value="История">📜 Исторические места</option>
+                        <option value="Религия">⛪ Религиозные объекты</option>
+                        <option value="Спорт">⚽ Спортивные объекты</option>
+                        <option value="Развлечения">🎪 Развлечения</option>
+                        <option value="Другое">🔶 Другое</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="address"><i class="fas fa-map-marker-alt"></i> Адрес/Местоположение *</label>
+                    <input type="text" id="address" name="address" required placeholder="Например: Удмуртия, Завьяловский район, деревня Нижний Казес">
+                </div>
+
+                <div class="form-group">
+                    <label for="image"><i class="fas fa-camera"></i> Фотография</label>
+                    <input type="file" id="image" name="image" accept="image/*">
+                    <small><i class="fas fa-info-circle"></i> Разрешенные форматы: JPG, PNG. Максимальный размер: 5MB</small>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Добавить место
+                    </button>
+                    <a href="/attractions" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Отмена
+                    </a>
+                </div>
+
+                <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                    <p><small><i class="fas fa-info-circle"></i> После добавления место будет отправлено на модерацию. После проверки администратором оно появится в общем списке.</small></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

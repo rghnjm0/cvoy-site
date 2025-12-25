@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Редактировать место - Удмуртия</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="nav">
+        <div>
+            <div class="nav-links">
+                <a href="/"><i class="fas fa-home"></i> Главная</a>
+                <a href="/attractions"><i class="fas fa-landmark"></i> Все места</a>
+                <a href="/add_place"><i class="fas fa-plus-circle"></i> Добавить место</a>
+                <a href="/my_places"><i class="fas fa-map-marker-alt"></i> Мои места</a>
+            </div>
+            <div class="nav-user">
+                <span class="user-greeting"><i class="fas fa-user"></i> {{ user.username }}</span>
+                <a href="/logout"><i class="fas fa-sign-out-alt"></i> Выйти</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1><i class="fas fa-edit"></i> Редактировать место</h1>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="flash">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="add-place-form">
+            <form method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="name"><i class="fas fa-signature"></i> Название места *</label>
+                    <input type="text" id="name" name="name" value="{{ place[1] }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description"><i class="fas fa-align-left"></i> Краткое описание *</label>
+                    <textarea id="description" name="description" required rows="3">{{ place[2] }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="detailed_description"><i class="fas fa-file-alt"></i> Подробное описание *</label>
+                    <textarea id="detailed_description" name="detailed_description" required rows="8">{{ place[3] if place[3] else place[2] }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="category"><i class="fas fa-tag"></i> Категория *</label>
+                    <select id="category" name="category" required>
+                        <option value="Природа" {% if place[4] == 'Природа' %}selected{% endif %}>🌳 Природа</option>
+                        <option value="Архитектура" {% if place[4] == 'Архитектура' %}selected{% endif %}>🏛️ Архитектура</option>
+                        <option value="Музеи" {% if place[4] == 'Музеи' %}selected{% endif %}>🏛️ Музеи</option>
+                        <option value="Парки" {% if place[4] == 'Парки' %}selected{% endif %}>🌳 Парки</option>
+                        <option value="Памятники" {% if place[4] == 'Памятники' %}selected{% endif %}>🗿 Памятники</option>
+                        <option value="Культура" {% if place[4] == 'Культура' %}selected{% endif %}>🎭 Культура</option>
+                        <option value="История" {% if place[4] == 'История' %}selected{% endif %}>📜 История</option>
+                        <option value="Религия" {% if place[4] == 'Религия' %}selected{% endif %}>⛪ Религия</option>
+                        <option value="Спорт" {% if place[4] == 'Спорт' %}selected{% endif %}>⚽ Спорт</option>
+                        <option value="Развлечения" {% if place[4] == 'Развлечения' %}selected{% endif %}>🎪 Развлечения</option>
+                        <option value="Другое" {% if place[4] == 'Другое' %}selected{% endif %}>🔶 Другое</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="address"><i class="fas fa-map-marker-alt"></i> Адрес *</label>
+                    <input type="text" id="address" name="address" value="{{ place[5] }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="image"><i class="fas fa-camera"></i> Фотография (оставьте пустым, чтобы оставить текущую)</label>
+                    <input type="file" id="image" name="image" accept="image/*">
+                    <small><i class="fas fa-info-circle"></i> Текущее изображение: {{ place[6] }}</small>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Сохранить изменения
+                    </button>
+                    <a href="/my_places" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Отмена
+                    </a>
+                </div>
+
+                <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                    <p><small><i class="fas fa-info-circle"></i> После редактирования место будет отправлено на повторную модерацию.</small></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

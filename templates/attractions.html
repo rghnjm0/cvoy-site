@@ -1,68 +1,122 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Все достопримечательности</title>
+    <title>Все места Удмуртии</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div class="nav">
         <div>
-            <a href="/">Главная</a>
-            <a href="/attractions">Достопримечательности</a>
-        </div>
-        <div>
-            {% if user %}
-                <span>Привет, {{ user.username }}</span>
-                <a href="/logout">Выйти</a>
-            {% else %}
-                <a href="/login">Вход</a>
-                <a href="/register">Регистрация</a>
-            {% endif %}
+            <div class="nav-links">
+                <a href="/"><i class="fas fa-home"></i> Главная</a>
+                <a href="/attractions"><i class="fas fa-landmark"></i> Все места</a>
+                <a href="/add_place"><i class="fas fa-plus-circle"></i> Добавить место</a>
+                {% if user %}
+                    <a href="/my_places"><i class="fas fa-map-marker-alt"></i> Мои места</a>
+                {% endif %}
+            </div>
+            <div class="nav-user">
+                {% if user %}
+                    <span class="user-greeting"><i class="fas fa-user"></i> {{ user.username }}</span>
+                    <a href="/logout"><i class="fas fa-sign-out-alt"></i> Выйти</a>
+                {% else %}
+                    <a href="/login"><i class="fas fa-sign-in-alt"></i> Вход</a>
+                    <a href="/register"><i class="fas fa-user-plus"></i> Регистрация</a>
+                {% endif %}
+            </div>
         </div>
     </div>
 
     <div class="container">
         {% if current_category %}
-            <h1>Достопримечательности: {{ current_category }}</h1>
+            <h1><i class="fas fa-tag"></i> Места: {{ current_category }}</h1>
         {% else %}
-            <h1>Все достопримечательности Ижевска</h1>
+            <h1><i class="fas fa-compass"></i> Все места Удмуртии</h1>
         {% endif %}
 
-        <!-- Навигация по категориям -->
-        <div class="categories-nav" style="margin-bottom: 30px; text-align: center;">
-            <a href="/attractions" class="btn {% if not current_category %}btn-primary{% else %}btn-secondary{% endif %}" style="margin: 5px;">Все</a>
-            <a href="/attractions?category=Архитектура" class="btn {% if current_category == 'Архитектура' %}btn-primary{% else %}btn-secondary{% endif %}" style="margin: 5px;">Архитектура</a>
-            <a href="/attractions?category=Музеи" class="btn {% if current_category == 'Музеи' %}btn-primary{% else %}btn-secondary{% endif %}" style="margin: 5px;">Музеи</a>
-            <a href="/attractions?category=Парки" class="btn {% if current_category == 'Парки' %}btn-primary{% else %}btn-secondary{% endif %}" style="margin: 5px;">Парки</a>
-            <a href="/attractions?category=Памятники" class="btn {% if current_category == 'Памятники' %}btn-primary{% else %}btn-secondary{% endif %}" style="margin: 5px;">Памятники</a>
-            <a href="/attractions?category=Развлечения" class="btn {% if current_category == 'Развлечения' %}btn-primary{% else %}btn-secondary{% endif %}" style="margin: 5px;">Развлечения</a>
-            <a href="/attractions?category=Культура" class="btn {% if current_category == 'Культура' %}btn-primary{% else %}btn-secondary{% endif %}" style="margin: 5px;">Культура</a>
-            <a href="/attractions?category=Прогулки" class="btn {% if current_category == 'Прогулки' %}btn-primary{% else %}btn-secondary{% endif %}" style="margin: 5px;">Прогулки</a>
-        </div>
-
-        <div class="attractions">
-            {% for attr in attractions %}
-            <div class="card">
-                <img src="{{ url_for('static', filename='images/' + attr[5]) }}" alt="{{ attr[1] }}" onerror="this.src='{{ url_for('static', filename='images/placeholder.jpg') }}'">
-                <div class="card-badge">{{ attr[3] }}</div>
-                <h3>{{ attr[1] }}</h3>
-                <p>{{ attr[2] }}</p>
-                <p><small>📍 {{ attr[4] }}</small></p>
-                <a href="{{ url_for('attraction', id=attr[0]) }}" class="btn">Подробнее</a>
-            </div>
+        <!-- Фильтр по категориям -->
+        <div class="categories-nav" style="margin-bottom: 30px;">
+            <a href="/attractions" class="btn {% if not current_category %}btn-primary{% else %}btn-secondary{% endif %}">
+                <i class="fas fa-globe"></i> Все места
+            </a>
+            {% for category in categories %}
+                <a href="/attractions?category={{ category }}"
+                   class="btn {% if current_category == category %}btn-primary{% else %}btn-secondary{% endif %}">
+                    {{ category }}
+                </a>
             {% endfor %}
         </div>
 
-        {% if not attractions %}
-        <div style="text-align: center; padding: 40px;">
-            <h3>Достопримечательности не найдены</h3>
-            <p>Попробуйте выбрать другую категорию</p>
-            <a href="/attractions" class="btn">Показать все достопримечательности</a>
+        <!-- Поиск -->
+        <div class="search-box">
+            <form action="/search" method="GET" class="search-form">
+                <input type="text" name="q" value="{{ query if query else '' }}" placeholder="Поиск по всем местам...">
+                <button type="submit" class="btn"><i class="fas fa-search"></i> Найти</button>
+            </form>
         </div>
+
+        <!-- Список мест -->
+        {% if attractions %}
+            <div class="attractions">
+                {% for attr in attractions %}
+                <div class="card">
+                    <img src="{{ url_for('static', filename=attr[6]) }}" alt="{{ attr[1] }}"
+                         onerror="this.src='{{ url_for('static', filename='images/placeholder.jpg') }}'">
+                    <div class="card-badge">{{ attr[4] }}</div>
+                    <h3>{{ attr[1] }}</h3>
+                    <p>{{ attr[2] }}</p>
+                    <p><small><i class="fas fa-user"></i> {{ attr[12] if attr[12] else 'Админ' }}</small></p>
+                    <p><small><i class="fas fa-eye"></i> {{ attr[10] }} просмотров</small></p>
+                    <p><small><i class="fas fa-star"></i> Рейтинг: {{ "%.1f"|format(attr[11]) if attr[11] else "Нет оценок" }}</small></p>
+                    <a href="{{ url_for('attraction', id=attr[0]) }}" class="btn">
+                        <i class="fas fa-info-circle"></i> Подробнее
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Пагинация -->
+            {% if total_pages > 1 %}
+            <div class="pagination">
+                {% if page > 1 %}
+                    <a href="?{% if current_category %}category={{ current_category }}&{% endif %}page={{ page-1 }}" class="page-link">
+                        <i class="fas fa-chevron-left"></i> Назад
+                    </a>
+                {% endif %}
+
+                {% for p in range(1, total_pages + 1) %}
+                    {% if p == page %}
+                        <span class="page-link active">{{ p }}</span>
+                    {% elif p >= page-2 and p <= page+2 %}
+                        <a href="?{% if current_category %}category={{ current_category }}&{% endif %}page={{ p }}" class="page-link">{{ p }}</a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page < total_pages %}
+                    <a href="?{% if current_category %}category={{ current_category }}&{% endif %}page={{ page+1 }}" class="page-link">
+                        Вперед <i class="fas fa-chevron-right"></i>
+                    </a>
+                {% endif %}
+            </div>
+            {% endif %}
+        {% else %}
+            <div class="empty-state">
+                <h3><i class="fas fa-search"></i> Места не найдены</h3>
+                <p>Попробуйте выбрать другую категорию или изменить поисковый запрос</p>
+                <a href="/attractions" class="btn btn-primary">
+                    <i class="fas fa-redo"></i> Показать все места
+                </a>
+            </div>
         {% endif %}
 
-        <div style="text-align: center; margin-top: 30px;">
-            <a href="/" class="btn">На главную</a>
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="/add_place" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Добавить своё место
+            </a>
+            <a href="/" class="btn btn-secondary">
+                <i class="fas fa-home"></i> На главную
+            </a>
         </div>
     </div>
 </body>
