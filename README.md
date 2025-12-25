@@ -94,5 +94,4 @@
 Этот проект распространяется под лицензией GPL-3.0. См. файл LICENSE для получения подробной информации.
 
 ## 📞 Контакты
-Ваше Имя - @ваш_username - email@example.com
-Ссылка на проект: https://github.com/ваш_username/udmurtia-places
+@kolyan_94
